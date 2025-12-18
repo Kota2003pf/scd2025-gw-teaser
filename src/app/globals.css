@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  /* ■ 修正: "游ゴシック体" を一番最初に持ってきます */
+  /* 1. "游ゴシック体" → Macがこれを拾います（Windowsは無視） */
+  /* 2. "Yu Gothic Medium" → Windowsがこれを拾います（Macは無視） */
+  /* 3. それ以降は保険です */
+  font-family: "游ゴシック体", YuGothic, "Yu Gothic Medium", "Yu Gothic", "游ゴシック", sans-serif;
+  
+  /* カーソル設定など（そのまま） */
+  cursor: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  
+  /* おまけ：游ゴシックをさらに美しく見せるプロの設定（文字詰め） */
+  font-feature-settings: "palt";
+}
+
+a, button, [role="button"] {
+  cursor: none;
+}
+
+body:has(.hide-cursor-target:hover) .custom-cursor img {
+  opacity: 0;
+}
