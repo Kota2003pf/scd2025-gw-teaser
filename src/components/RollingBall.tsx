@@ -11,11 +11,12 @@ const BASE_RADIUS = 0.5;
 
 type RollingBallProps = {
   modelPath: string;
+  xRange: number; // 追加
 };
 
 type VelocityArray = [number, number, number];
 
-export default function RollingBall({ modelPath }: RollingBallProps) {
+export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
   const { scene } = useGLTF(modelPath);
   const clonedScene = useMemo(() => scene.clone(), [scene]);
   const rigidBody = useRef<RapierRigidBody>(null);
@@ -40,7 +41,8 @@ export default function RollingBall({ modelPath }: RollingBallProps) {
   const exactY = FLOOR_SURFACE + actualRadius;
 
   const initialData = useMemo(() => {
-    const x = (Math.random() - 0.5) * 50; 
+    // ▼▼ 修正: 渡された xRange の範囲内で出現させる ▼▼
+    const x = (Math.random() - 0.5) * (xRange * 2); 
     const z = (Math.random() - 0.5) * 30; 
     
     const position: [number, number, number] = [x, exactY, z];
@@ -70,7 +72,7 @@ export default function RollingBall({ modelPath }: RollingBallProps) {
     ];
 
     return { position, linvel, angvel };
-  }, [exactY, actualRadius]);
+  }, [exactY, actualRadius, xRange]);
 
   useFrame(() => {
     if (!rigidBody.current) return;
@@ -90,7 +92,6 @@ export default function RollingBall({ modelPath }: RollingBallProps) {
     <RigidBody
       ref={rigidBody}
       colliders="ball"
-      // ▼▼ グループ設定: 自分は0, 相手も0 (転がる床) ▼▼
       collisionGroups={interactionGroups(0, [0])}
       canSleep={false}
       restitution={0.0} 

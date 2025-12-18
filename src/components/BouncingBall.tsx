@@ -7,11 +7,12 @@ import * as THREE from 'three';
 
 type BouncingBallProps = {
   modelPath: string;
+  xRange: number; // 追加
 };
 
 type VelocityArray = [number, number, number];
 
-export default function BouncingBall({ modelPath }: BouncingBallProps) {
+export default function BouncingBall({ modelPath, xRange }: BouncingBallProps) {
   const { scene } = useGLTF(modelPath);
   const clonedScene = useMemo(() => scene.clone(), [scene]);
   const rigidBody = useRef<RapierRigidBody>(null);
@@ -33,7 +34,8 @@ export default function BouncingBall({ modelPath }: BouncingBallProps) {
   const scale = useMemo(() => 0.9 + Math.random() * 0.2, []);
 
   const initialData = useMemo(() => {
-    const x = (Math.random() - 0.5) * 50; 
+    // ▼▼ 修正: xRange の範囲内で出現 ▼▼
+    const x = (Math.random() - 0.5) * (xRange * 2); 
     const z = (Math.random() - 0.5) * 30; 
     const y = (Math.random() * 20) - 5; 
     
@@ -59,15 +61,13 @@ export default function BouncingBall({ modelPath }: BouncingBallProps) {
     ];
 
     return { position, linvel, angvel };
-  }, []);
+  }, [xRange]);
 
   return (
     <RigidBody
       ref={rigidBody}
       colliders="ball"
       collisionGroups={interactionGroups(1, [1])}
-      // ▼▼ 変更: 反発係数を落とす（1.2 -> 0.95） ▼▼
-      // 1.0未満にすることで、徐々に落ち着いた動きになります。
       restitution={0.95} 
       friction={0.0}
       linearDamping={0} 
