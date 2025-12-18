@@ -1,4 +1,5 @@
 import Experience from '../components/Experience';
+import CursorFollower from '../components/CursorFollower';
 
 export default function Home() {
   return (
@@ -44,7 +45,7 @@ export default function Home() {
 
       {/* テキストレイヤー：展覧会情報 */}
       <div 
-        className="center-text-container" // ▼▼ 追加: コンテナ用クラス
+        className="center-text-container"
         style={{ 
           position: 'relative', 
           zIndex: 10, // 一番手前
@@ -54,13 +55,13 @@ export default function Home() {
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          pointerEvents: 'none' 
+          pointerEvents: 'none' // テキスト周りの余白をクリックしても反応しないようにする
         }}
       >
         <div style={{ pointerEvents: 'auto', textAlign: 'center' }}>
           <h1 
             className="
-              center-text           
+              center-text
               hide-cursor-target 
               cursor-none
               text-[25px] 
@@ -70,9 +71,8 @@ export default function Home() {
               antialiased       
               leading-[2.0]
             "
-            // ▲▲ 上記 center-text を追加しました（これでスマホ時にCSSが効きます）
-
             // ■ フォント設定
+            // Mac(Safari)用に "YuGothic" を先頭、Windows用に "Yu Gothic Medium"
             style={{ 
               fontFamily: 'YuGothic, "游ゴシック体", "Yu Gothic", "Yu Gothic Medium", "游ゴシック", sans-serif',
               fontWeight: 550, 
@@ -85,6 +85,10 @@ export default function Home() {
           </h1>
         </div>
       </div>
+
+      {/* カーソル追従コンポーネント（最前面・クリック透過・ぼやけ対策済み） */}
+      <CursorFollower />
+
     </main>
   );
 }
