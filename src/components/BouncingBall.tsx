@@ -7,7 +7,7 @@ import * as THREE from 'three';
 
 type BouncingBallProps = {
   modelPath: string;
-  xRange: number; // 追加
+  xRange: number;
 };
 
 type VelocityArray = [number, number, number];
@@ -34,8 +34,10 @@ export default function BouncingBall({ modelPath, xRange }: BouncingBallProps) {
   const scale = useMemo(() => 0.9 + Math.random() * 0.2, []);
 
   const initialData = useMemo(() => {
-    // ▼▼ 修正: xRange の範囲内で出現 ▼▼
-    const x = (Math.random() - 0.5) * (xRange * 2); 
+    // ▼▼ 修正: こちらも壁ギリギリを避ける（安全マージン確保） ▼▼
+    const safeRange = Math.max(1, xRange - 2.0);
+    const x = (Math.random() - 0.5) * (safeRange * 2); 
+
     const z = (Math.random() - 0.5) * 30; 
     const y = (Math.random() * 20) - 5; 
     
@@ -68,6 +70,8 @@ export default function BouncingBall({ modelPath, xRange }: BouncingBallProps) {
       ref={rigidBody}
       colliders="ball"
       collisionGroups={interactionGroups(1, [1])}
+      // ▼▼ 追加: CCD有効化 ▼▼
+      ccd
       restitution={0.95} 
       friction={0.0}
       linearDamping={0} 

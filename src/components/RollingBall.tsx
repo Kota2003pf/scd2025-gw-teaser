@@ -11,7 +11,7 @@ const BASE_RADIUS = 0.5;
 
 type RollingBallProps = {
   modelPath: string;
-  xRange: number; // 追加
+  xRange: number;
 };
 
 type VelocityArray = [number, number, number];
@@ -41,8 +41,11 @@ export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
   const exactY = FLOOR_SURFACE + actualRadius;
 
   const initialData = useMemo(() => {
-    // ▼▼ 修正: 渡された xRange の範囲内で出現させる ▼▼
-    const x = (Math.random() - 0.5) * (xRange * 2); 
+    // ▼▼ 修正: 壁ギリギリに出現しないよう、安全マージン(-2)を確保 ▼▼
+    // これで「壁に埋まって生成→弾き飛ばされて消滅」を防ぎます
+    const safeRange = Math.max(1, xRange - 2.0);
+    const x = (Math.random() - 0.5) * (safeRange * 2); 
+    
     const z = (Math.random() - 0.5) * 30; 
     
     const position: [number, number, number] = [x, exactY, z];
@@ -94,6 +97,8 @@ export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
       colliders="ball"
       collisionGroups={interactionGroups(0, [0])}
       canSleep={false}
+      // ▼▼ 追加: CCD（連続衝突検出）を有効化して、壁抜けを防止 ▼▼
+      ccd 
       restitution={0.0} 
       friction={3.0}    
       linearDamping={0} 
