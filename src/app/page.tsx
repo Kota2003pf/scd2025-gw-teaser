@@ -31,7 +31,7 @@ export default function Home() {
             height: '100%',
             border: 'none',
             opacity: 0.1,           // 透明度
-            pointerEvents: 'none',  // クリックを貫通させる（これがないとボール遊びができません）
+            pointerEvents: 'none',  // クリックを貫通させる
             filter: 'blur(2px) grayscale(20%)', // 少しぼかして背景らしくする
           }}
         />
@@ -44,6 +44,7 @@ export default function Home() {
 
       {/* テキストレイヤー：展覧会情報 */}
       <div 
+        className="center-text-container" // ▼▼ 追加: コンテナ用クラス
         style={{ 
           position: 'relative', 
           zIndex: 10, // 一番手前
@@ -53,13 +54,14 @@ export default function Home() {
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          pointerEvents: 'none' // テキスト周りの余白をクリックしても反応しないようにする
+          pointerEvents: 'none' 
         }}
       >
         <div style={{ pointerEvents: 'auto', textAlign: 'center' }}>
           <h1 
             className="
-            hide-cursor-target 
+              center-text           
+              hide-cursor-target 
               cursor-none
               text-[25px] 
               text-[#d9d9d9] 
@@ -68,13 +70,12 @@ export default function Home() {
               antialiased       
               leading-[2.0]
             "
-            // ■ フォント設定の最終決定版
-            // Mac(Safari)用に "YuGothic" (スペースなし) を先頭に配置
-            // Windows用に "Yu Gothic Medium" を配置
-            // 最後に保険として日本語名を入れる
+            // ▲▲ 上記 center-text を追加しました（これでスマホ時にCSSが効きます）
+
+            // ■ フォント設定
             style={{ 
               fontFamily: 'YuGothic, "游ゴシック体", "Yu Gothic", "Yu Gothic Medium", "游ゴシック", sans-serif',
-              fontWeight: 550, // 細くなりすぎないよう調整
+              fontWeight: 550, 
             }}
           >
             卒業制作展 2025<br />

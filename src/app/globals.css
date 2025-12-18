@@ -29,3 +29,36 @@ a, button, [role="button"] {
 body:has(.hide-cursor-target:hover) .custom-cursor img {
   opacity: 0;
 }
+
+/* src/app/globals.css などに追加 */
+
+/* スマホ版 (幅768px以下) のスタイル上書き */
+@media (max-width: 768px) {
+  
+  /* 1. カーソル追従ロゴ (scdlogo) を非表示にする */
+  /* もしIDがついているなら #scdlogo、クラスなら .scdlogo に書き換えてください */
+  .scdlogo, #cursor-follower { 
+    display: none !important;
+  }
+
+  /* 2. 中央のテキストの調整 */
+  /* 対象の要素のクラス名（例: .center-text）に合わせてください */
+  .center-text-container h1, 
+  .center-text,
+  p { 
+    /* サイズを15pxに固定 */
+    font-size: 15px !important;
+    
+    /* 色を紺色に固定 */
+    color: #0A2B6F !important;
+    
+    /* ホバー時の色変化や透過などを無効化（念のため） */
+    transition: none !important;
+    opacity: 1 !important;
+  }
+  
+  /* ホバー設定がCSSにある場合、スマホでは上書きして無効化 */
+  .center-text:hover {
+    color: #0A2B6F !important;
+  }
+}

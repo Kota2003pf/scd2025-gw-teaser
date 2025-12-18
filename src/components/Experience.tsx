@@ -3,31 +3,56 @@
 import { Canvas } from '@react-three/fiber';
 import { Physics, CuboidCollider, interactionGroups } from '@react-three/rapier';
 import { Environment, useGLTF } from '@react-three/drei';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useMemo } from 'react';
 import BouncingBall from './BouncingBall';
 import RollingBall from './RollingBall';
-import FloatingBall from './FloatingBall'; // 追加
+import FloatingBall from './FloatingBall';
 
 const DEPARTMENT_URL = 'https://www.kisode.com';
 
 const SOURCE_FILES = Array.from({ length: 9 }, (_, i) => `/scdball${i + 1}.glb`);
-const BALL_FILES = [
-  ...SOURCE_FILES, 
-  ...SOURCE_FILES, 
-  ...SOURCE_FILES, 
-  ...SOURCE_FILES
-];
 
+// プリロード
 SOURCE_FILES.forEach(path => useGLTF.preload(path));
 
 export default function Experience() {
   // 0: Rolling, 1: Bouncing, 2: Floating
   const [mode, setMode] = useState<number | null>(null);
+  // モバイル判定フラグ
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // 3パターンからランダムに選択
+    // 1. モードをランダム決定
     setMode(Math.floor(Math.random() * 3));
+
+    // 2. モバイル判定（画面幅768px以下ならモバイルとする）
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // 初回チェック
+    checkMobile();
+
+    // リサイズ時も監視（PCでウィンドウを縮めた時などのため）
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // ▼▼ 表示するボールのリストを動的に生成 ▼▼
+  const activeBallFiles = useMemo(() => {
+    if (isMobile) {
+      // スマホ: 負荷軽減のため 1セット（9個）のみ
+      return [...SOURCE_FILES];
+    } else {
+      // PC: 画面が広いので 4セット（36個）
+      return [
+        ...SOURCE_FILES, 
+        ...SOURCE_FILES, 
+        ...SOURCE_FILES, 
+        ...SOURCE_FILES
+      ];
+    }
+  }, [isMobile]);
 
   const handleBackgroundClick = () => {
     window.location.href = DEPARTMENT_URL;
@@ -46,16 +71,15 @@ export default function Experience() {
       <Suspense fallback={null}>
         <Physics gravity={[0, -9.81, 0]}>
           
-          {mode !== null && BALL_FILES.map((path, index) => {
+          {/* 生成したリスト(activeBallFiles)を使ってレンダリング */}
+          {mode !== null && activeBallFiles.map((path, index) => {
             if (mode === 0) return <RollingBall key={index} modelPath={path} />;
             if (mode === 1) return <BouncingBall key={index} modelPath={path} />;
             if (mode === 2) return <FloatingBall key={index} modelPath={path} />;
             return null;
           })}
 
-          {/* ====================================================
-             グループ0: 転がるボール用 (Layer 0)
-             ==================================================== */}
+          {/* === グループ0: 転がるボール用 === */}
           <group>
             <CuboidCollider 
               position={[0, -8, 0]} 
@@ -72,9 +96,7 @@ export default function Experience() {
           </group>
 
 
-          {/* ====================================================
-             グループ1: バウンドボール用 (Layer 1)
-             ==================================================== */}
+          {/* === グループ1: バウンドボール用 === */}
           <group>
             <CuboidCollider 
               position={[0, -8, 0]} 
@@ -96,9 +118,6 @@ export default function Experience() {
             <CuboidCollider position={[0, 10, -20]} args={[50, 50, 1]} restitution={1.0} friction={0} collisionGroups={interactionGroups(1, [1])} />
             <CuboidCollider position={[0, 10, 20]} args={[50, 50, 1]} restitution={1.0} friction={0} collisionGroups={interactionGroups(1, [1])} />
           </group>
-          
-          {/* グループ2 (Floating) は物理的な壁が不要（Kinematicなので突き抜けるため）ですが、
-              表示上画面の外に行き過ぎないように制御するのは FloatingBall 内の計算で行っています。 */}
 
         </Physics>
       </Suspense>
