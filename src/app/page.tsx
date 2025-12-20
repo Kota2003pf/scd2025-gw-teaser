@@ -64,7 +64,7 @@ export default function Home() {
               center-text
               hide-cursor-target 
               cursor-none
-              text-[23px] 
+              text-[22px] 
               text-[#d9d9d9] 
               hover:text-[#0a2b6f]
               font-normal           
