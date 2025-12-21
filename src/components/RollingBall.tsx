@@ -6,17 +6,18 @@ import { useMemo, useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const FLOOR_SURFACE = -7; 
 const BASE_RADIUS = 0.5;
 
+// 型定義に floorY を含めます
 type RollingBallProps = {
   modelPath: string;
   xRange: number;
+  floorY: number; 
 };
 
 type VelocityArray = [number, number, number];
 
-export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
+export default function RollingBall({ modelPath, xRange, floorY }: RollingBallProps) {
   const { scene } = useGLTF(modelPath);
   const clonedScene = useMemo(() => scene.clone(), [scene]);
   const rigidBody = useRef<RapierRigidBody>(null);
@@ -36,16 +37,14 @@ export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
   }, [clonedScene]);
 
   const scale = useMemo(() => 0.9 + Math.random() * 0.2, []);
-  
   const actualRadius = BASE_RADIUS * scale;
-  const exactY = FLOOR_SURFACE + actualRadius;
+  
+  // 受け取った floorY を使って高さを計算
+  const exactY = (floorY + 0.5) + actualRadius;
 
   const initialData = useMemo(() => {
-    // ▼▼ 修正: 壁ギリギリに出現しないよう、安全マージン(-2)を確保 ▼▼
-    // これで「壁に埋まって生成→弾き飛ばされて消滅」を防ぎます
     const safeRange = Math.max(1, xRange - 2.0);
     const x = (Math.random() - 0.5) * (safeRange * 2); 
-    
     const z = (Math.random() - 0.5) * 30; 
     
     const position: [number, number, number] = [x, exactY, z];
@@ -97,7 +96,6 @@ export default function RollingBall({ modelPath, xRange }: RollingBallProps) {
       colliders="ball"
       collisionGroups={interactionGroups(0, [0])}
       canSleep={false}
-      // ▼▼ 追加: CCD（連続衝突検出）を有効化して、壁抜けを防止 ▼▼
       ccd 
       restitution={0.0} 
       friction={3.0}    
