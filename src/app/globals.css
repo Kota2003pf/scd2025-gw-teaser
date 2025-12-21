@@ -55,7 +55,7 @@ body:has(.hide-cursor-target:hover) .scdlogo {
     font-size: 15px !important;
     
     /* 色を紺色に固定 */
-    color: #00ff8c !important;
+    color:#0A2B6F  !important;
     
     /* ホバー時の色変化や透過などを無効化（念のため） */
     transition: none !important;
