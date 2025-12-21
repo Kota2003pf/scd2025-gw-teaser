@@ -65,7 +65,7 @@ export default function Home() {
               center-text
               hide-cursor-target 
               cursor-none
-              text-[25px] 
+              text-[22px] 
               text-[#d9d9d9] 
               hover:text-[#0a2b6f]
               font-normal           
@@ -77,9 +77,9 @@ export default function Home() {
               fontWeight: 550, 
             }}
           >
-            卒業制作展 2025<br />
+            2025年度 卒業・修了制作展<br />
             武蔵野美術大学基礎デザイン学科<br />
-            <span className="block mt-4">会期2026 1/15〜1/18</span>
+            <span className="block mt-4">会期 2026 1/15〜1/18</span>
             武蔵野美術大学鷹の台キャンパス
           </h1>
         </div>
